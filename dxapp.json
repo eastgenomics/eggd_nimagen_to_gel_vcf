@@ -1,7 +1,7 @@
 {
   "name": "nimagen_to_gel_vcf_v1.0.0",
   "title": "App to convert sentieon dnaseq output VCF to GEL specified VCF",
-  "summary": "App to convert sentieon dnaseq output VCF to GEL specified VCF. Output VCF must meet the GEL VCF specifications  ",
+  "summary": "VCF meeting GEL specification for WGS SNP genotyping",
   "dxapi": "1.0.0",
   "inputSpec": [
     {
@@ -18,12 +18,12 @@
       "help": "The index file corresponding to the input VCF file",
       "class": "file",
       "patterns": ["*vcf.gz.tbi"],
-      "optional": true
+      "optional": false
     },
     {
       "name": "fasta_file",
-      "label": "fasta_file",
-      "help": "The GRCh38 fasta file",
+      "label": "GRCh38 genome fasta",
+      "help": "GRCh38 genome fasta",
       "class": "file",
       "patterns": ["*fa.gz"],
       "optional": false
@@ -73,7 +73,7 @@
     "aws:eu-central-1": {
       "systemRequirements": {
         "*": {
-          "instanceType": "mem2_ssd1_v2_x16"
+          "instanceType": "mem1_ssd1_v2_x4"
         }
       }
     }

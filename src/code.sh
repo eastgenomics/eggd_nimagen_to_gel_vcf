@@ -22,59 +22,59 @@ set -e -x -o pipefail
 main() {
 
     # input variables
-	echo "installing bcftools"
-	cd /packages
-	tar -jxvf bcftools-1.13.tar.bz2
-	cd bcftools-1.13
-	./configure --prefix=/packages
-	make
-	make install
-	export PATH=/packages/bin:$PATH
+    echo "installing bcftools"
+    cd /packages
+    tar -jxvf bcftools-1.13.tar.bz2
+    cd bcftools-1.13
+    ./configure --prefix=/packages
+    make
+    make install
+    export PATH=/packages/bin:$PATH
 
-	echo "installing htslib"
-	cd /packages
-	tar -jxvf htslib-1.13.tar.bz2
-	cd htslib-1.13
-	./configure --prefix=/packages
-	make
-	make install
-	export PATH=/packages/bin:$PATH
+    echo "installing htslib"
+    cd /packages
+    tar -jxvf htslib-1.13.tar.bz2
+    cd htslib-1.13
+    ./configure --prefix=/packages
+    make
+    make install
+    export PATH=/packages/bin:$PATH
 
-	# Store the vcf file name as a string
-	vcf_file=`dx describe "${input_vcf}" --name`
+    # Store the vcf file name as a string
+    vcf_file=$input_vcf_name
 
-	# Remove .vcf extension from vcf file name
-	vcf_prefix="${vcf_file%.vcf.gz}"
+    # Remove .vcf extension from vcf file name
+    vcf_prefix="${vcf_file%.vcf.gz}"
 
-	# Download vcf and index files
-	dx download "$input_vcf" -o "$vcf_file"
-	dx download "$input_vcf_index" -o "${vcf_prefix}.vcf.gz.tbi" 
-	dx download "$fasta_file" -o fasta_file
-	dx download "$header_txt" -o header_txt
+    # Download vcf and index files
+    dx download "$input_vcf" -o "$vcf_file"
+    dx download "$input_vcf_index" -o "$input_vcf_index_name"
+    dx download "$fasta_file" -o fasta_file
+    dx download "$header_txt" -o header_txt
 
 
-	# Use bcftools annotate to fill in missing header lines
-	#less update_header.txt
-	##fileDate=
-	##source=my_assay=nimagen_v0.1
+    # Use bcftools annotate to fill in missing header lines
+    #less update_header.txt
+    ##fileDate=
+    ##source=my_assay=nimagen_v0.1
 
-	bcftools annotate -h header_txt $vcf_file > correct_header.vcf
-	
-	# Update reference fasta
-	
-	sed 's+file://genome/GRCh38.no_alt_analysis_set.fa+http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/GRCh38_reference_genome/GRCh38_full_analysis_set_plus_decoy_hla.fa+g' correct_header.vcf > correct_header2.vcf
-	
-	# Update date in vcf 
+    bcftools annotate -h header_txt $vcf_file > correct_header.vcf
 
-	sed "s/yyyymmdd/$(date '+%Y%m%d')/g" correct_header2.vcf > correct_header_date.vcf
+    # Update reference fasta
 
-	# Split multiallelic variants
+    sed 's+file://genome/GRCh38.no_alt_analysis_set.fa+http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/GRCh38_reference_genome/GRCh38_full_analysis_set_plus_decoy_hla.fa+g' correct_header.vcf > correct_header2.vcf
 
-	bcftools norm -f fasta_file -m -any correct_header_date.vcf -o correct_header_date_split_multiallelics.vcf
+    # Update date in vcf 
 
-	# Output GEL vcf should be gunzipped and indexed
-	gel_vcf="${vcf_prefix}_gel_compatible.vcf.gz"
-	bgzip -c correct_header_date_split_multiallelics.vcf > "${gel_vcf}"
+    sed "s/yyyymmdd/$(date '+%Y%m%d')/g" correct_header2.vcf > correct_header_date.vcf
+
+    # Split multiallelic variants
+
+    bcftools norm -f fasta_file -m -any correct_header_date.vcf -o correct_header_date_split_multiallelics.vcf
+
+    # Output GEL vcf should be gunzipped and indexed
+    gel_vcf="${vcf_prefix}_gel_compatible.vcf.gz"
+    bgzip -c correct_header_date_split_multiallelics.vcf > "${gel_vcf}"
 
 
 	tabix -fp vcf $gel_vcf
