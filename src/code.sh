@@ -72,18 +72,18 @@ main() {
 
     bcftools norm -f fasta_file -m -any correct_header_date.vcf -o correct_header_date_split_multiallelics.vcf
 
-    # Output GEL vcf should be gunzipped and indexed
+    # Add PASS to SNPs that have DP > 99
     gel_vcf="${vcf_prefix}_gel_compatible.vcf.gz"
-    bgzip -c correct_header_date_split_multiallelics.vcf > "${gel_vcf}"
+    bcftools filter -s "LOW_DP" --mode +x -i "INFO/DP > 99" -O z -o "${gel_vcf}" correct_header_date_split_multiallelics.vcf
+
+    # Index output GEL vcf 
+    tabix -fp vcf $gel_vcf
 
 
-	tabix -fp vcf $gel_vcf
+    # upload output files
+    GEL_vcf=$(dx upload $gel_vcf --brief)
+    GEL_vcf_index=$(dx upload "${gel_vcf}.tbi" --brief)
 
-
-	# upload output files
-	GEL_vcf=$(dx upload $gel_vcf --brief)
-	GEL_vcf_index=$(dx upload "${gel_vcf}.tbi" --brief)
-
-	dx-jobutil-add-output GEL_vcf "$GEL_vcf" --class=file
-	dx-jobutil-add-output GEL_vcf_index "$GEL_vcf_index" --class=file
+    dx-jobutil-add-output GEL_vcf "$GEL_vcf" --class=file
+    dx-jobutil-add-output GEL_vcf_index "$GEL_vcf_index" --class=file
 }
