@@ -72,15 +72,15 @@ main() {
 
     bcftools norm -f fasta_file -m -any correct_header_date.vcf -o correct_header_date_split_multiallelics.vcf
 
-    # Add PASS to SNPs that have DP > 99
-    gel_vcf="${vcf_prefix}_gel_compatible.vcf.gz"
+    # Add PASS to SNPs that have DP > 99 and LOW_DP to SNPs <= 99
+    gel_vcf="${vcf_prefix}_gel.vcf.gz"
     bcftools filter -s "LOW_DP" --mode +x -i "INFO/DP > 99" -O z -o "${gel_vcf}" correct_header_date_split_multiallelics.vcf
 
     # Index output GEL vcf 
     tabix -fp vcf $gel_vcf
 
 
-    # upload output files
+    # Upload output files
     GEL_vcf=$(dx upload $gel_vcf --brief)
     GEL_vcf_index=$(dx upload "${gel_vcf}.tbi" --brief)
 
