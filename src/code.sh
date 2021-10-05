@@ -55,8 +55,8 @@ main() {
 
     # Use bcftools annotate to fill in missing header lines
     #less update_header.txt
-    ##fileDate=
-    ##source=my_assay=nimagen_v0.1
+    ##fileDate=yyyymmdd
+    ##source=nimagen_v*
 
     bcftools annotate -h header_txt $vcf_file > correct_header.vcf
 
@@ -77,7 +77,7 @@ main() {
     bcftools filter -s "LOW_DP" --mode +x -i "INFO/DP > 99" -O z -o "${gel_vcf}" correct_header_date_split_multiallelics.vcf
 
     # Index output GEL vcf 
-    tabix -fp vcf $gel_vcf
+    tabix -p vcf $gel_vcf
 
 
     # Upload output files
