@@ -64,13 +64,20 @@ main() {
 
     sed 's+file://genome/GRCh38.no_alt_analysis_set.fa+http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/GRCh38_reference_genome/GRCh38_full_analysis_set_plus_decoy_hla.fa+g' correct_header.vcf > correct_header2.vcf
 
-    # Update date in vcf 
+    # Update sample ID in vcf
 
-    sed "s/yyyymmdd/$(date '+%Y%m%d')/g" correct_header2.vcf > correct_header_date.vcf
+    index=2  # SampleID field index of the GM number
+    old_id=$(grep -m1 "^#CHROM" correct_header2.vcf | awk -F "\t" '{print $NF}')
+    echo $old_id | awk -F "_" '{print $1}' | awk -F"-" -v Index=$index '{print $Index}' > new_id
+    bcftools reheader -s new_id correct_header2.vcf > fixed_header.vcf
+
+    # Update date
+
+    sed "s/yyyymmdd/$(date '+%Y%m%d')/g" fixed_header.vcf > fixed_date_header.vcf
 
     # Split multiallelic variants
 
-    bcftools norm -f fasta_file -m -any correct_header_date.vcf -o correct_header_date_split_multiallelics.vcf
+    bcftools norm -f fasta_file -m -any fixed_date_header.vcf -o correct_header_date_split_multiallelics.vcf
 
     # Add PASS to SNPs that have DP > 99 and LOW_DP to SNPs <= 99
     gel_vcf="${vcf_prefix}_gel.vcf.gz"
