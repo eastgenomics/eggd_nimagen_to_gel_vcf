@@ -56,7 +56,7 @@ main() {
     # Use bcftools annotate to fill in missing header lines
     #less update_header.txt
     ##fileDate=yyyymmdd
-    ##source=nimagen_v*
+    ##source=nimagen_v1.0.0
 
     bcftools annotate -h header_txt $vcf_file > correct_header.vcf
 
