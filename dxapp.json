@@ -1,0 +1,81 @@
+{
+  "name": "nimagen_to_gel_vcf",
+  "title": "nimagen_to_gel_vcf",
+  "summary": "App to convert sentieon dnaseq output VCF to VCF meeting GEL specification for WGS SNP genotyping",
+  "dxapi": "1.0.0",
+  "inputSpec": [
+    {
+      "name": "input_vcf",
+      "label": "dnaseq_vcf",
+      "help": "The ID of a sentieon output VCF file for GEL vcf conversion",
+      "class": "file",
+      "patterns": ["*.vcf.gz"],
+      "optional": false
+    },
+    {
+      "name": "input_vcf_index",
+      "label": "vcf_index",
+      "help": "The index file corresponding to the input VCF file",
+      "class": "file",
+      "patterns": ["*vcf.gz.tbi"],
+      "optional": false
+    },
+    {
+      "name": "fasta_file",
+      "label": "GRCh38 genome fasta",
+      "help": "GRCh38 genome fasta",
+      "class": "file",
+      "patterns": ["*fa.gz"],
+      "optional": false
+    },
+    {
+      "name": "header_txt",
+      "label": "header_txt",
+      "help": "The correct header txt file to replace the original vcf header to match GEL specifications. Version of header must match version of snp nimagen assay",
+      "class": "file",
+      "patterns": ["*txt"],
+      "optional": true
+    }
+  ],
+  "outputSpec": [
+    {
+      "name": "GEL_vcf",
+      "label": "GEL_vcf",
+      "help": "",
+      "class": "file",
+      "patterns": ["*"]
+    },
+    {
+      "name": "GEL_vcf_index",
+      "label": "GEL_vcf_index",
+      "help": "",
+      "class": "file",
+      "patterns": ["*"]
+    }
+  ],
+  "runSpec": {
+    "version": "1",
+    "file": "src/code.sh",
+    "release": "16.04",
+    "interpreter": "bash",
+    "timeoutPolicy": {
+      "*": {
+        "hours": 48
+      }
+    },
+    "distribution": "Ubuntu"
+  },
+  "access": {
+    "project": "CONTRIBUTE"
+  },
+  "ignoreReuse": false,
+  "regionalOptions": {
+    "aws:eu-central-1": {
+      "systemRequirements": {
+        "*": {
+          "instanceType": "mem1_ssd1_v2_x4"
+        }
+      }
+    }
+  }
+}
