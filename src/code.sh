@@ -21,25 +21,6 @@ set -e -x -o pipefail
 
 main() {
 
-    # input variables
-    echo "installing bcftools"
-    cd /packages
-    tar -jxvf bcftools-1.13.tar.bz2
-    cd bcftools-1.13
-    ./configure --prefix=/packages
-    make
-    make install
-    export PATH=/packages/bin:$PATH
-
-    echo "installing htslib"
-    cd /packages
-    tar -jxvf htslib-1.13.tar.bz2
-    cd htslib-1.13
-    ./configure --prefix=/packages
-    make
-    make install
-    export PATH=/packages/bin:$PATH
-
     # Store the vcf file name as a string
     vcf_file=$input_vcf_name
 
