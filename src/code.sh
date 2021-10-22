@@ -26,6 +26,7 @@ main() {
 
     # Remove .vcf extension from vcf file name
     vcf_prefix="${vcf_file%.vcf.gz}"
+    # Add '.' in 5th position e.g 
 
     # Download vcf and index files
     dx download "$input_vcf" -o "$vcf_file"
@@ -49,7 +50,7 @@ main() {
 
     index=2  # SampleID field index of the GM number
     old_id=$(grep -m1 "^#CHROM" correct_header2.vcf | awk -F "\t" '{print $NF}')
-    echo $old_id | awk -F "_" '{print $1}' | awk -F"-" -v Index=$index '{print $Index}' > new_id
+    echo $old_id | awk -F "_" '{print $1}' | awk -F"-" -v Index=$index '{print $Index}' | sed 's/./&./4' > new_id
     bcftools reheader -s new_id correct_header2.vcf > fixed_header.vcf
 
     # Update date
@@ -61,9 +62,8 @@ main() {
     bcftools norm -f fasta_file -m -any fixed_date_header.vcf -o correct_header_date_split_multiallelics.vcf
 
     # Add PASS to SNPs that have DP > 99 and LOW_DP to SNPs <= 99
-    gel_vcf="${vcf_prefix}_gel.vcf"
+    gel_vcf="${new_id}_gel.vcf"
     bcftools filter -s "LOW_DP" --mode +x -i "INFO/DP > 99" -o "${gel_vcf}" correct_header_date_split_multiallelics.vcf
-
 
 
     # Upload output file

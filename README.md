@@ -16,15 +16,15 @@ This app outputs a gel compatible VCF.
 - Splits multiallelic variants
 - Adds the PASS tag to SNPs with DP > 99
 - Adds LOW_DP tag to SNPs with DP < 99
-- Produces a GEL compatible VCF and its index
+- Produces a GEL compatible VCF
 
 ## What are the GEL requirements
 
-|  App 	| Version  	|
+|  Requirement 	| Description  	|
 |---	|---	|
 |Genome version GRCh38       |reference file that Genomics England |
 |“chr” prefix   |chr1, chr2, chr3, chr4, chr5, ..., chr21, chr22, chrX, chrY|
-|One sample per vcf|single sample VCF|_
+|One sample per vcf|single sample VCF|
 |Header with appropriate tags|fileDate and source|
 |source field          |Must be from an enumeration reflecting the standardised names of the assays used for genotyping|
 |Sample ID column name	|primary_sample_id_in_glh_lims|
