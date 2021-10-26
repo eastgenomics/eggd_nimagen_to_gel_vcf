@@ -1,21 +1,35 @@
 <!-- dx-header -->
-# nimagen_to_gel_vcf(DNAnexus Platform App)
+# eggd_nimagen_to_gel_vcf(DNAnexus Platform App)
 
 ## What does this app do?
-App to convert sentieon dnaseq output VCF to VCF meeting GEL specification for WGS SNP genotyping
-
-## What are typical use cases for this app?
-This app may be executed as a standalone app.
+### This app converts sentieon dnaseq output VCF to a VCF meeting Genomics England (GEL) specifications for WGS SNP genotyping
 
 ## What data are required for this app to run?
 This app requires a VCF and its index as inputs. The genome reference file and the header_v*.txt file.
-Optionally it also may take an integer to set a MAPQ threshold, or not perform removal of multimapped reads.
 
 ## What does this app output?
-This app outputs a gel compatible VCF and an index file.
+This app outputs a gel compatible VCF.
 
-This is the source code for an app that runs on the DNAnexus Platform.
-For more information about how to run or modify it, see
-https://documentation.dnanexus.com/.
+## What does this app do?
+### This app uses bcftools to create a GEL compatible vcf by:
+- Corrects the VCF header (reference, date, source field, correct sample name)
+- Splits multiallelic variants
+- Adds the PASS tag to SNPs with DP > 99
+- Adds LOW_DP tag to SNPs with DP < 99
+- Produces a GEL compatible VCF
 
-#### This app was made by EMEE GLH
+## What are the GEL requirements
+
+|  Requirement 	| Description  	|
+|---	|---	|
+|Genome version GRCh38       |reference file that Genomics England |
+|“chr” prefix   |chr1, chr2, chr3, chr4, chr5, ..., chr21, chr22, chrX, chrY|
+|One sample per vcf|single sample VCF|
+|Header with appropriate tags|fileDate and source|
+|source field          |Must be from an enumeration reflecting the standardised names of the assays used for genotyping|
+|Sample ID name	|e.g GM17.08228|
+|VCF fields      |GT, PL, GQ|
+|Biallelic SNVs           |The ALT field must not contain more than one value|
+|PASS variants  |DP > 99|
+|LOW_DP variants           |DP < 99|
+|Variants normalised             |parsimonious and left-aligned|
