@@ -26,7 +26,6 @@ main() {
 
     # Remove .vcf extension from vcf file name
     vcf_prefix="${vcf_file%.vcf.gz}"
-    # Add '.' in 5th position e.g GM17.08228
 
     # Download vcf and index files
     dx download "$input_vcf" -o "$vcf_file"
@@ -46,9 +45,8 @@ main() {
     sed 's+file://genome/GRCh38.no_alt_analysis_set.fa+http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/GRCh38_reference_genome/GRCh38_full_analysis_set_plus_decoy_hla.fa+g' correct_header.vcf > correct_header2.vcf
 
     # Update sample ID in vcf
-    index=2  # SampleID field index of the GM number
     old_id=$(grep -m1 "^#CHROM" correct_header2.vcf | awk -F "\t" '{print $NF}')
-    echo $old_id | awk -F "_" '{print $1}' | awk -F"-" -v Index=$index '{print $Index}' | sed 's/./&./4' > correct_sample_id
+    echo $old_id | awk -F "_" '{print $1}' > correct_sample_id
     bcftools reheader -s correct_sample_id correct_header2.vcf > fixed_header.vcf
 
     # Update date
