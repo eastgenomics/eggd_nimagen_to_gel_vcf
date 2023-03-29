@@ -3,11 +3,11 @@
   "title": "eggd_nimagen_to_gel_vcf",
   "summary": "App to convert sentieon dnaseq output VCF to VCF meeting GEL specification for WGS SNP genotyping",
   "properties": {
-    "githubRelease": "v1.6.0"
+    "githubRelease": "v1.7.0"
   },
   "dxapi": "1.0.0",
   "openSource": true,
-  "version": "1.6.0",
+  "version": "1.7.0",
   "inputSpec": [
     {
       "name": "input_vcf",
