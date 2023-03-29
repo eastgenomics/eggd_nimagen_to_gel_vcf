@@ -74,6 +74,9 @@
   "authorizedUsers": [
     "org-emee_1"
   ],
+  "developers": [
+    "org-emee_1"
+  ],
   "regionalOptions": {
     "aws:eu-central-1": {
       "systemRequirements": {
