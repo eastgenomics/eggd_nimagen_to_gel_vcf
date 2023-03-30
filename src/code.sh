@@ -34,19 +34,20 @@ main() {
     dx download "$header_txt" -o header_txt
 
     # Use bcftools annotate to fill in missing header lines
-    #less update_header.txt
-    ##fileDate=yyyymmdd
-    ##source=nimagen_v1.0.0
-
     bcftools annotate -h header_txt $vcf_file > correct_header.vcf
 
     # Update reference fasta
-
     sed 's+file://genome/GRCh38.no_alt_analysis_set.fa+http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/GRCh38_reference_genome/GRCh38_full_analysis_set_plus_decoy_hla.fa+g' correct_header.vcf > correct_header2.vcf
 
     # Update sample ID in vcf
+    index=2     # SampleID field index of GM number (if pre-Epic sample)
     old_id=$(grep -m1 "^#CHROM" correct_header2.vcf | awk -F "\t" '{print $NF}')
-    echo $old_id | awk -F "_" '{print $1}' > correct_sample_id
+    echo $old_id | awk -F "_" '{print $1}' | awk -F"-" -v Index=$index '{print $Index}' | sed 's/./&./4' > field2
+    if [[ cat $field2 == GM* ]]; then
+        cat $field2 > correct_sample_id
+    else
+        echo $old_id | awk -F "_" '{print $1}' > correct_sample_id
+    fi
     bcftools reheader -s correct_sample_id correct_header2.vcf > fixed_header.vcf
 
     # Update date
