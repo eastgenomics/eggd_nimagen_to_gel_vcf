@@ -43,7 +43,7 @@ main() {
     index=2     # SampleID field index of GM number (if pre-Epic sample)
     old_id=$(grep -m1 "^#CHROM" correct_header2.vcf | awk -F "\t" '{print $NF}')
     echo $old_id | awk -F "_" '{print $1}' | awk -F"-" -v Index=$index '{print $Index}' | sed 's/./&./4' > field2
-    if [[ cat $field2 == GM* ]]; then
+    if [[ $(cat $field2) == GM* ]]; then
         cat $field2 > correct_sample_id
     else
         echo $old_id | awk -F "_" '{print $1}' > correct_sample_id
