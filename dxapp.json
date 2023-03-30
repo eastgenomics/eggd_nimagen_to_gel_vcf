@@ -74,7 +74,7 @@
   "authorizedUsers": [
     "org-emee_1"
   ],
-  "developers": [
+  "developers":[
     "org-emee_1"
   ],
   "regionalOptions": {
@@ -101,7 +101,7 @@
       }
     ],
     "contactEmail": "East GLH Bioinformatics",
-    "whatsNew": "* 1.5.0 Initial app\n * Sample name ID corrected\n "
+    "whatsNew": "* 1.7.0 Epic sample name parsing added\n "
   },
   "categories": [],
   "access": {
