@@ -44,11 +44,11 @@ main() {
     old_id=$(grep -m1 "^#CHROM" correct_header2.vcf | awk -F "\t" '{print $NF}')
     field2=$(echo $old_id | awk -F "_" '{print $1}' | awk -F"-" -v Index=$index '{print $Index}' | sed 's/./&./4')
     if [[ $field2 == GM* ]]; then
-        correct_sample_id=$field2
+        echo $field2 > correct_sample_id
     else
-        correct_sample_id=$(echo $old_id | awk -F "_" '{print $1}')
+        echo $old_id | awk -F "_" '{print $1}' > correct_sample_id
     fi
-    bcftools reheader -s $correct_sample_id correct_header2.vcf > fixed_header.vcf
+    bcftools reheader -s correct_sample_id correct_header2.vcf > fixed_header.vcf
 
     # Update date
     sed "s/yyyymmdd/$(date '+%Y%m%d')/g" fixed_header.vcf > fixed_date_header.vcf
@@ -57,7 +57,8 @@ main() {
     bcftools norm -f fasta_file -m -any fixed_date_header.vcf -o correct_header_date_split_multiallelics.vcf
 
     # Add PASS to SNPs that have DP > 99 and LOW_DP to SNPs <= 99
-    GEL_vcf="${correct_sample_id}_GEL.vcf"
+    vcf_sample_id=$(cat correct_sample_id)
+    GEL_vcf="${vcf_sample_id}_GEL.vcf"
     bcftools filter -s "LOW_DP" --mode +x -i "INFO/DP > 99" -o "${GEL_vcf}" correct_header_date_split_multiallelics.vcf
 
     # Upload output file
